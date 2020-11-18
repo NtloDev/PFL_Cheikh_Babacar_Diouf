@@ -2,12 +2,57 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Entity\Formateur;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Doctrine\ORM\Mapping\DiscriminatorMap;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping\DiscriminatorColumn;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+
+
 /**
+ * @ApiResource(
+ * attributes = {
+ *              "security" = "is_granted('ROLE_ADMIN')",
+ *              "security_message" = "Accès refusé!"
+ *       },
+ * collectionOperations = {
+ *      "create_user"={
+ *              "method"="POST",
+ *              "path"="/admin/users",
+ *              "route_name" = "create_user"   
+ *       },
+ *       "getUsers" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/users",
+ *              "normalization_context"={"groups"={"users:read"}} 
+ *       },
+ * },
+ * itemOperations={
+ *      "getUserById"={
+ *          "method"= "GET",
+ *          "path"= "/admin/users/{id}"  
+ *      },
+ *      "editUser"={
+ *          "method"= "PUT",
+ *          "path"= "/admin/users/{id}"  
+ *      },
+ *      "archiverUser" = {
+ *          "method"= "PUT",
+ *          "path" = "/admin/users/{id}/archive",
+ *          "controller" = ArchivageUserController::class   
+ *       }
+ * }
+ * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @DiscriminatorColumn(name="dtype", type="string")
+ * @DiscriminatorMap({"formateur" = "Formateur", "apprenant" = "Apprenant","user"="User","cm"="CM","admin"="Admin"})
  */
 class User implements UserInterface
 {
@@ -20,6 +65,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups({"ProfilUsers:read","profilUser:read","users:read"})
      */
     private $username;
 
@@ -34,21 +80,25 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"ProfilUsers:read","profilUser:read","users:read"})
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"ProfilUsers:read","profilUser:read","users:read"})
      */
     private $Nom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"users:read"})
      */
     private $Email;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"users:read"})
      */
     private $Telephone;
 
@@ -59,14 +109,23 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"users:read"})
      */
     private $genre;
 
     /**
      * @ORM\ManyToOne(targetEntity=Profil::class, inversedBy="Users")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $profil;
+
+
+    public function __construct()
+    {
+        $this->formateurs = new ArrayCollection();
+    }
+
+    
 
     public function getId(): ?int
     {
@@ -224,4 +283,6 @@ class User implements UserInterface
 
         return $this;
     }
+
+   
 }
