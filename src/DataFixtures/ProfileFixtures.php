@@ -11,15 +11,33 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ProfileFixtures extends Fixture
 {
+    public const ADMIN_REFERENCE = "ADMIN";
+    public const FORMATEUR_REFERENCE = "FORMATEUR";
+    public const APPRENANT_REFERENCE = "APPRENANT";
+    public const CM_REFERENCE = "CM";
+
     public function load(ObjectManager $manager)
     {
+
         // $product = new Product();
         // $manager->persist($product);
             $profiles = ["ADMIN","FORMATEUR","CM","APPRENANT"];
-            for ($i=0; $i<4 ; $i++) {
+            for ($i=0; $i<count($profiles) ; $i++) {
                 $profile= new profil();
                 $profile ->setLibelle($profiles[$i]);
-                $this->addReference($i,$profile);
+                if($profile[$i]= 'ADMIN'){
+                    $this->addReference(self::ADMIN_REFERENCE,$profile);
+                }
+                elseif($profile[$i]= 'FORMATEUR'){
+                    $this->addReference(self::FORMATEUR_REFERENCE,$profile);
+                }
+                elseif($profile[$i]= 'APPRENANT'){
+                    $this->addReference(self::APPRENANT_REFERENCE,$profile);
+                }
+                elseif($profile[$i]= 'CM'){
+                    $this->addReference(self::CM_REFERENCE,$profile);
+                }
+                //$this->addReference($i,$profile);
                 $manager->persist($profile);
             }
             $manager->flush();

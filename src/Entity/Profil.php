@@ -5,17 +5,21 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProfilRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 
 /**
  * @ApiResource(
  * attributes = {
+ *              "pagination_client_enabled"=true,
+ *              "pagination_items_per_page"=1,
  *              "security" = "is_granted('ROLE_ADMIN')",
  *              "security_message" = "Accès refusé!"
  *       },
@@ -65,6 +69,7 @@ use Symfony\Component\Validator\Constraints\Length;
  * 
  * },
  * )
+ * @ApiFilter(BooleanFilter::class, properties={"archive"})
  * @ORM\Entity(repositoryClass=ProfilRepository::class)
  */
 class Profil
@@ -82,7 +87,7 @@ class Profil
      * @Assert\Length(
      *      min = 3,
      *      max = 100,
-     *      minMessage = "Le libelle ne doit avoir au moins {{ limit }} charactères",
+     *      minMessage = "Le libelle doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le libelle ne doit pas dépasser {{ limit }} charactères"
      * )
      * @Groups({"profil:read","ProfilUsers:read","profilUser:read","Oneprofil:read","Oneprofil:write"})

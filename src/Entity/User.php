@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Formateur;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -12,12 +13,15 @@ use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 
 
 
 /**
+ * @ApiFilter(BooleanFilter::class, properties={"archive"})
  * @ApiResource(
  * attributes = {
+ *              
  *              "security" = "is_granted('ROLE_ADMIN')",
  *              "security_message" = "Accès refusé!"
  *       },
@@ -25,7 +29,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *      "create_user"={
  *              "method"="POST",
  *              "path"="/admin/users",
- *              "route_name" = "create_user"   
+ *              "route_name" = "create_user",
+ *              "deserialize"=false   
  *       },
  *       "getUsers" = {
  *              "method"= "GET",
@@ -118,6 +123,11 @@ class User implements UserInterface
      * @ORM\JoinColumn(nullable=true)
      */
     private $profil;
+
+    /**
+     * @ORM\Column(type="blob", nullable=true)
+     */
+    private $avatar;
 
 
     public function __construct()
@@ -280,6 +290,18 @@ class User implements UserInterface
     public function setProfil(?Profil $profil): self
     {
         $this->profil = $profil;
+
+        return $this;
+    }
+
+    public function getAvatar()
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar($avatar): self
+    {
+        $this->avatar = $avatar;
 
         return $this;
     }

@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20201117142351 extends AbstractMigration
+final class Version20201119085834 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -23,6 +23,7 @@ final class Version20201117142351 extends AbstractMigration
         $this->addSql('DROP TABLE admin');
         $this->addSql('DROP TABLE apprenant');
         $this->addSql('DROP TABLE cm');
+        $this->addSql('ALTER TABLE user ADD dtype VARCHAR(255) NOT NULL, ADD libelle VARCHAR(255) DEFAULT NULL, DROP avatar');
     }
 
     public function down(Schema $schema) : void
@@ -31,5 +32,6 @@ final class Version20201117142351 extends AbstractMigration
         $this->addSql('CREATE TABLE admin (id INT AUTO_INCREMENT NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
         $this->addSql('CREATE TABLE apprenant (id INT AUTO_INCREMENT NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
         $this->addSql('CREATE TABLE cm (id INT AUTO_INCREMENT NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
+        $this->addSql('ALTER TABLE user ADD avatar LONGBLOB NOT NULL, DROP dtype, DROP libelle');
     }
 }

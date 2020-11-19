@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\Userservice;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,22 +27,20 @@ class UserController extends AbstractController
      * )
      */
         
-    public function create_user(Request $request, SerializerInterface $serialize,UserPasswordEncoderInterface $encoder,EntityManagerInterface $entity)
+    public function create_user(Userservice $use,Request $request, SerializerInterface $serialize,UserPasswordEncoderInterface $encoder,EntityManagerInterface $entity)
     {
-    
+        //$test = $use->uploadimage();
+        //dd($test);
         $User_json = $request->request->all();
-        $image = $request->files->get("avatar");
+        $image = $request->files->get("avatar");      
         $User = $serialize ->denormalize($User_json,"App\Entity\User",true);
         $image = fopen($image->getRealPath(),"rb");
         $User -> setAvatar($image);
-        $User ->setArchived(0);
-        $password = $User -> getPassword();
-        $User -> SetPassword($encoder->encodePassword($User, $password));
+        $User ->setArchive(0);
+        $User -> SetPassword($encoder->encodePassword($User, 'passer'));
         $entity -> persist($User);
         $entity -> flush();
         fclose($image);
         return $this->json("succes",201);
-
-        
     }
 }
