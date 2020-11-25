@@ -11,33 +11,34 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ProfileFixtures extends Fixture
 {
-    public const ADMIN_REFERENCE = "ADMIN";
-    public const FORMATEUR_REFERENCE = "FORMATEUR";
-    public const APPRENANT_REFERENCE = "APPRENANT";
-    public const CM_REFERENCE = "CM";
+    public const ADMIN_REFERENCE = 'ADMIN';
+    public const APPRENANT_REFERENCE = 'APPRENANT';
+    public const CM_REFERENCE = 'CM';
+    public const FORMATEUR_REFERENCE = 'FORMATEUR';
 
     public function load(ObjectManager $manager)
     {
 
         // $product = new Product();
         // $manager->persist($product);
-            $profiles = ["ADMIN","FORMATEUR","CM","APPRENANT"];
+            $profiles = ['ADMIN','APPRENANT','CM','FORMATEUR'];
             for ($i=0; $i<count($profiles) ; $i++) {
                 $profile= new profil();
                 $profile ->setLibelle($profiles[$i]);
-                if($profile[$i]= 'ADMIN'){
+                $profile ->setArchivage(0);
+                if($profiles[$i]== 'ADMIN'){
                     $this->addReference(self::ADMIN_REFERENCE,$profile);
                 }
-                elseif($profile[$i]= 'FORMATEUR'){
-                    $this->addReference(self::FORMATEUR_REFERENCE,$profile);
-                }
-                elseif($profile[$i]= 'APPRENANT'){
+                elseif($profiles[$i]=='APPRENANT'){
                     $this->addReference(self::APPRENANT_REFERENCE,$profile);
                 }
-                elseif($profile[$i]= 'CM'){
+                elseif($profiles[$i]== 'CM'){
                     $this->addReference(self::CM_REFERENCE,$profile);
                 }
-                //$this->addReference($i,$profile);
+                elseif($profiles[$i]== 'FORMATEUR'){
+                    $this->addReference(self::FORMATEUR_REFERENCE,$profile);
+                }
+                //$this->setReference($i,$profile);
                 $manager->persist($profile);
             }
             $manager->flush();

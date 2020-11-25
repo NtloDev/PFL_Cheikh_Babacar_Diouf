@@ -12,7 +12,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-abstract class CmFixtures extends Fixture implements DependentFixtureInterface
+class CmFixtures extends Fixture implements DependentFixtureInterface
 {
     private $encoder;
     
@@ -31,16 +31,22 @@ abstract class CmFixtures extends Fixture implements DependentFixtureInterface
             $cm = new Cm();
             $harsh = $this->encoder->encodePassword($cm, 'passer');
             $cm->setProfil($this->getReference(ProfileFixtures::CM_REFERENCE));
-            $cm->setUsername($faker->unique()->randomElement(['babacar','aminata','Oumar','Laye']));
+            $cm->setUsername($faker->unique()->randomElement(['Oumar']));
             $cm->setPassword($faker->randomElement([ $harsh, $harsh, $harsh, $harsh]));
             $cm->setPrenom($faker->randomElement(['babacar','aminata','Oumar','Laye']));
             $cm->setNom($faker->randomElement(['Diouf','Lo','Anne', 'Sall']));
             $cm->setEmail($faker->randomElement(['babacar@sa.sn','aminata@sa.sn','Oumar@sa.sn','laye@sa.sn']));
             $cm->setTelephone($faker->randomElement(['778458574','778548596','774859652','777777777']));
-            $cm->setArchive($faker->randomElement(['true','false','true','false']));
+            $cm->setArchivage($faker->randomElement([0]));
             $cm->setGenre($faker->randomElement(['F','M','F','F']));
             $manager->persist($cm);
 
         $manager->flush();
+    }
+    public function getDependencies()
+    {
+        return array(
+            UserFixtures::Class,
+        );
     }
 }

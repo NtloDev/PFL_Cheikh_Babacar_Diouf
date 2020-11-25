@@ -12,7 +12,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-abstract class FormateurFixtures extends Fixture implements DependentFixtureInterface
+class FormateurFixtures extends Fixture implements DependentFixtureInterface
 {
     private $encoder;
     
@@ -31,16 +31,22 @@ abstract class FormateurFixtures extends Fixture implements DependentFixtureInte
             $form = new Formateur();
             $harsh = $this->encoder->encodePassword($form, 'passer');
             $form->setProfil($this->getReference(ProfileFixtures::FORMATEUR_REFERENCE));
-            $form->setUsername($faker->unique()->randomElement(['babacar','aminata','Oumar','Laye']));
+            $form->setUsername($faker->unique()->randomElement(['aminata']));
             $form->setPassword($faker->randomElement([ $harsh, $harsh, $harsh, $harsh]));
             $form->setPrenom($faker->randomElement(['babacar','aminata','Oumar','Laye']));
             $form->setNom($faker->randomElement(['Diouf','Lo','Anne', 'Sall']));
             $form->setEmail($faker->randomElement(['babacar@sa.sn','aminata@sa.sn','Oumar@sa.sn','laye@sa.sn']));
             $form->setTelephone($faker->randomElement(['778458574','778548596','774859652','777777777']));
-            $form->setArchive($faker->randomElement(['true','false','true','false']));
+            $form->setArchivage($faker->randomElement([0]));
             $form->setGenre($faker->randomElement(['F','M','F','F']));
             $manager->persist($form);
 
         $manager->flush();
+    }
+    public function getDependencies()
+    {
+        return array(
+            UserFixtures::Class,
+        );
     }
 }

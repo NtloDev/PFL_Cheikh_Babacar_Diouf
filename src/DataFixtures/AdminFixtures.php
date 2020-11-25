@@ -12,7 +12,7 @@ use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-abstract class AdminFixtures extends Fixture implements DependentFixtureInterface
+class AdminFixtures extends Fixture implements DependentFixtureInterface
 {
     private $encoder;
     
@@ -31,16 +31,22 @@ abstract class AdminFixtures extends Fixture implements DependentFixtureInterfac
             $admin = new Admin();
             $harsh = $this->encoder->encodePassword($admin, 'passer');
             $admin->setProfil($this->getReference(ProfileFixtures::ADMIN_REFERENCE));
-            $admin->setUsername($faker->unique()->randomElement(['babacar','aminata','Oumar','Laye']));
+            $admin->setUsername($faker->unique('babacar')->randomElement(['babacar']));
             $admin->setPassword($faker->randomElement([ $harsh, $harsh, $harsh, $harsh]));
             $admin->setPrenom($faker->randomElement(['babacar','aminata','Oumar','Laye']));
             $admin->setNom($faker->randomElement(['Diouf','Lo','Anne', 'Sall']));
             $admin->setEmail($faker->randomElement(['babacar@sa.sn','aminata@sa.sn','Oumar@sa.sn','laye@sa.sn']));
             $admin->setTelephone($faker->randomElement(['778458574','778548596','774859652','777777777']));
-            $admin->setArchive($faker->randomElement(['true','false','true','false']));
+            $admin->setArchivage($faker->randomElement([0]));
             $admin->setGenre($faker->randomElement(['F','M','F','F']));
             $manager->persist($admin);
 
         $manager->flush();
+    }
+    public function getDependencies()
+    {
+        return array(
+            UserFixtures::Class,
+        );
     }
 }

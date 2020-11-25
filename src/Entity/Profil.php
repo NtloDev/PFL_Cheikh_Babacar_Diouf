@@ -100,6 +100,11 @@ class Profil
      */
     private $Users;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $archivage;
+
     public function __construct()
     {
         $this->Users = new ArrayCollection();
@@ -148,6 +153,18 @@ class Profil
                 $user->setProfil(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getArchivage(): ?bool
+    {
+        return $this->archivage;
+    }
+
+    public function setArchivage(bool $archivage): self
+    {
+        $this->archivage = $archivage;
 
         return $this;
     }

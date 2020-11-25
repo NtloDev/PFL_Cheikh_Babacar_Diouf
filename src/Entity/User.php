@@ -32,11 +32,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
  *              "route_name" = "create_user",
  *              "deserialize"=false   
  *       },
- *       "getUsers" = {
- *              "method"= "GET",
- *              "path" = "/admin/users",
- *              "normalization_context"={"groups"={"users:read"}} 
- *       },
  * },
  * itemOperations={
  *      "getUserById"={
@@ -47,11 +42,21 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
  *          "method"= "PUT",
  *          "path"= "/admin/users/{id}"  
  *      },
- *      "archiverUser" = {
- *          "method"= "PUT",
- *          "path" = "/admin/users/{id}/archive",
- *          "controller" = ArchivageUserController::class   
- *       }
+ *      "archive_user" = {
+ *          "method"= "DELETE",
+ *          "path" = "/admin/users/{id}/archive"  
+ *          
+ *       },"putUserId"={
+ *              "method"="PUT",
+ *              "path"="api/admin/users/{id}",
+ *              "route_name" = "putUserId",
+ *              "deserialize"=false
+ *       },
+ *       "getUsers" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/users",
+ *              "normalization_context"={"groups"={"users:read"}}
+ *       },
  * }
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -62,11 +67,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 class User implements UserInterface
 {
     /**
-     * @ORM\Id
+     * @ORM\Id.
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    protected $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
@@ -85,13 +90,13 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"ProfilUsers:read","profilUser:read","users:read"})
+     * @Groups({"ProfilUsers:read","profilUser:read","users:read","profilsdesortieapprenants:read"})
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"ProfilUsers:read","profilUser:read","users:read"})
+     * @Groups({"ProfilUsers:read","profilUser:read","users:read","profilsdesortieapprenants:read"})
      */
     private $Nom;
 
@@ -106,11 +111,6 @@ class User implements UserInterface
      * @Groups({"users:read"})
      */
     private $Telephone;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $archive;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -128,6 +128,11 @@ class User implements UserInterface
      * @ORM\Column(type="blob", nullable=true)
      */
     private $avatar;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $Archivage;
 
 
     public function __construct()
@@ -258,18 +263,6 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getArchive(): ?bool
-    {
-        return $this->archive;
-    }
-
-    public function setArchive(bool $archive): self
-    {
-        $this->archive = $archive;
-
-        return $this;
-    }
-
     public function getGenre(): ?string
     {
         return $this->genre;
@@ -302,6 +295,18 @@ class User implements UserInterface
     public function setAvatar($avatar): self
     {
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getArchivage(): ?bool
+    {
+        return $this->Archivage;
+    }
+
+    public function setArchivage(bool $Archivage): self
+    {
+        $this->Archivage = $Archivage;
 
         return $this;
     }
