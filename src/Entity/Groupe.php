@@ -32,7 +32,7 @@ class Groupe
     private $Archive;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Promo::class, inversedBy="groupes")
+     * @ORM\ManyToOne(targetEntity=Promo::class, inversedBy="groupes",cascade={"persist"})
      */
     private $Promo;
 

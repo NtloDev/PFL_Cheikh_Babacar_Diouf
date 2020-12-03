@@ -28,8 +28,7 @@ use Doctrine\ORM\Mapping as ORM;
  *              "security_message"="ACCES REFUSE",
  *              "method"="POST",
  *              "path"="/admin/competences",
- *              "normalization_context"={"groups"={"competencesEtNiveaux:write"}},
- *
+ *              "denormalization_context"={"groups"={"compde:write"}},
  *          },
  *
  *
@@ -47,7 +46,7 @@ use Doctrine\ORM\Mapping as ORM;
  *              "security_message"="ACCES REFUSE",
  *              "method"="PUT",
  *              "path"="/admin/competences/{id}",
- *              "normalization_context"={"groups"={"compgetid:write"}},
+ *              "denormalization_context"={"groups"={"compde:write"}},
  *          },
  * "archive"={
  *              "security"="is_granted('ROLE_ADMIN')",
@@ -65,13 +64,13 @@ class Competence
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"postgroupecomp:write"})
+     * @Groups({"postgroupecomp:write","grpcompde:write","compde:write"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"grpco:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read"})
+     * @Groups({"compde:write","grpcompde:write","grpco:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read"})
      * @Assert\NotBlank(message="Le libelle ne doit pas être vide")
      * @Assert\Length(
      *      min = 3,
@@ -84,7 +83,7 @@ class Competence
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"grpco:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read"})
+     * @Groups({"compde:write","grpcompde:write","grpco:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read"})
      * @Assert\NotBlank(message="La description ne doit pas être vide")
      * @Assert\Length(
      *      min = 8,
@@ -96,21 +95,23 @@ class Competence
     private $Description;
 
     /**
-     * @ORM\ManyToMany(targetEntity=GroupeDeCompetences::class, inversedBy="competences")
+     * @ORM\ManyToMany(targetEntity=GroupeDeCompetences::class, inversedBy="competences",cascade="persist")
+     * @Groups({"compde:write"})
+     *
      */
     private $GroupeDeCompetences;
 
     /**
-     * @ORM\ManyToMany(targetEntity=NiveauDevaluation::class, mappedBy="Competences")
+     * @ORM\ManyToMany(targetEntity=NiveauDevaluation::class, mappedBy="Competences",cascade="persist")
      * @ApiSubresource
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
+     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read","compde:write"})
      */
     private $niveauDevaluations;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $Archive;
+    private $Archive=false;
 
     public function __construct()
     {

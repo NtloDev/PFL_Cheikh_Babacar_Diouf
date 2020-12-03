@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Entity;
-
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -31,16 +30,15 @@ use Doctrine\ORM\Mapping as ORM;
  *              "normalization_context"={"groups"={"groupecompcomp:read"}},
  *
  *          },
- *        "postGrpCompetences"={
+ *        "pstGrpCompetences"={
  *              "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR')",
  *              "security_message"="ACCES REFUSE",
  *              "method"="POST",
  *              "path"="admin/grpecompetences",
- *              "normalization_context"={"groups"={"postgroupecomp:write"}},
+ *              "denormalization_context"={"groups"={"grpcompde:write"}},
  *
  *          },
  *},
-
  *itemOperations={
  *     "getcompetencebyID"={
  *              "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR')",
@@ -61,7 +59,7 @@ use Doctrine\ORM\Mapping as ORM;
  *              "security_message"="ACCES REFUSE",
  *              "method"="PUT",
  *              "path"="/admin/grpecompetences/{id}",
- *              "normalization_context"={"groups"={"putcompetence:write"}},
+ *              "denormalization_context"={"groups"={"grpcompde:write"}},
  *          },
  *  "archive_grpecompetence"={
  *              "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR')",
@@ -80,13 +78,13 @@ class GroupeDeCompetences
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"postref:write","grpcom:write"})
+     * @Groups({"postref:write","grpcom:write","grpcompde:write","compde:write"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"grpcom:write","grpco:read","afficherGr:read","postref:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","putcompetence:write","ref_grpe:read","competence:read"})
+     * @Groups({"compde:write","grpcompde:write","grpcom:write","grpco:read","afficherGr:read","postref:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","putcompetence:write","ref_grpe:read","competence:read"})
      * @Assert\NotBlank(message="Le libelle ne doit pas être vide")
      * @Assert\Length(
      *      min = 3,
@@ -99,7 +97,7 @@ class GroupeDeCompetences
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"grpcom:write","grpco:read","afficherGr:read","postref:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","putcompetence:write","ref_grpe:read","competence:read"})
+     * @Groups({"compde:write","grpcompde:write","grpcom:write","grpco:read","afficherGr:read","postref:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","putcompetence:write","ref_grpe:read","competence:read"})
      * @Assert\NotBlank(message="La description ne doit pas être vide")
      * @Assert\Length(
      *      min = 8,
@@ -111,16 +109,15 @@ class GroupeDeCompetences
     private $Description;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Competence::class, mappedBy="GroupeDeCompetences")
-     * @Groups({"grpco:read","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read"})
-     * @ApiSubresource
+     * @ORM\ManyToMany(targetEntity=Competence::class, mappedBy="GroupeDeCompetences",cascade="persist")
+     * @Groups({"grpcompde:write","grpco:read","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read"})
      */
     private $competences;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $Archive;
+    private $Archive=false;
 
     /**
      * @ORM\ManyToMany(targetEntity=Referentiel::class, mappedBy="GroupeDeCompetences")

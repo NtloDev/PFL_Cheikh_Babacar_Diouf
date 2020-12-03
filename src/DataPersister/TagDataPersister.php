@@ -1,12 +1,12 @@
 <?php
 
 namespace App\DataPersister;
-use App\Entity\Referentiel;
+use App\Entity\Tag;
+use App\DataPersister\TagDataPersister;
 use Doctrine\ORM\EntityManagerInterface;
-use App\DataPersister\ReferentielDataPersister;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 
-class ReferentielDataPersister implements ContextAwareDataPersisterInterface
+class TagDataPersister implements ContextAwareDataPersisterInterface
 {
     /**
      * @var EntityManagerInterface
@@ -20,13 +20,13 @@ class ReferentielDataPersister implements ContextAwareDataPersisterInterface
     }
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Referentiel;
+        return $data instanceof Tag;
     }
 
     public function persist($data, array $context = [])
     {
-       // $data->setLibelle($data->getLibelle());
-        $data->setArchive(true);
+        $data->setLibelLe($data->getLibelLe());
+        $data->setArchive(false);
 
         $this->_entityManager->persist($data);
         $this->_entityManager->flush();
@@ -35,8 +35,8 @@ class ReferentielDataPersister implements ContextAwareDataPersisterInterface
 
     public function remove($data, array $context = [])
     {
+
         $data->setArchive(true);
-        //dd($data);
 
         $this->_entityManager->flush();
     }

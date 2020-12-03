@@ -117,7 +117,7 @@ class Referentiel
     private $GroupeDeCompetences;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Promo::class, inversedBy="referentiels")
+     * @ORM\ManyToMany(targetEntity=Promo::class, inversedBy="referentiels",cascade={"persist"})
      */
     private $Promos;
 

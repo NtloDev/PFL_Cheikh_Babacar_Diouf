@@ -163,6 +163,22 @@ class User implements UserInterface
 
         return $this;
     }
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getDtype(): string
+    {
+        return (string) $this->Dtype;
+    }
+
+    public function setDtype(string $Dtype): self
+    {
+        $this->Dtype = $Dtype;
+
+        return $this;
+    }
 
     /**
      * @see UserInterface

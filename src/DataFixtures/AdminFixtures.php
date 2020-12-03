@@ -30,15 +30,15 @@ class AdminFixtures extends Fixture implements DependentFixtureInterface
         $faker = Faker\Factory::create('fr_FR');
             $admin = new Admin();
             $harsh = $this->encoder->encodePassword($admin, 'passer');
-            $admin->setProfil($this->getReference(ProfileFixtures::ADMIN_REFERENCE));
-            $admin->setUsername($faker->unique('babacar')->randomElement(['babacar']));
-            $admin->setPassword($faker->randomElement([ $harsh, $harsh, $harsh, $harsh]));
-            $admin->setPrenom($faker->randomElement(['babacar','aminata','Oumar','Laye']));
-            $admin->setNom($faker->randomElement(['Diouf','Lo','Anne', 'Sall']));
-            $admin->setEmail($faker->randomElement(['babacar@sa.sn','aminata@sa.sn','Oumar@sa.sn','laye@sa.sn']));
-            $admin->setTelephone($faker->randomElement(['778458574','778548596','774859652','777777777']));
-            $admin->setArchivage($faker->randomElement([0]));
-            $admin->setGenre($faker->randomElement(['F','M','F','F']));
+            $admin->setProfil($this->getReference(ProfileFixtures::ADMIN_REFERENCE))
+                  ->setUsername($faker->unique('babacar')->randomElement(['babacar']))
+                  ->setPassword($faker->randomElement([ $harsh, $harsh, $harsh, $harsh]))
+                  ->setPrenom($faker->randomElement(['babacar','aminata','Oumar','Laye']))
+                  ->setNom($faker->randomElement(['Diouf','Lo','Anne', 'Sall']))
+                  ->setEmail($faker->randomElement(['babacar@sa.sn','aminata@sa.sn','Oumar@sa.sn','laye@sa.sn']))
+                  ->setTelephone($faker->randomElement(['778458574','778548596','774859652','777777777']))
+                  ->setArchivage($faker->randomElement([0]))
+                  ->setGenre($faker->randomElement(['F','M','F','F']));
             $manager->persist($admin);
 
         $manager->flush();

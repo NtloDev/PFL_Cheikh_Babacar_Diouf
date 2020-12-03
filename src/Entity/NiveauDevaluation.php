@@ -28,7 +28,7 @@ class NiveauDevaluation
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
+     * @Groups({"compde:write","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
      * @Assert\NotBlank(message="Le libelle ne doit pas être vide")
      * @Assert\Length(
      *      min = 3,
@@ -41,7 +41,7 @@ class NiveauDevaluation
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
+     * @Groups({"compde:write","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
      *@Assert\NotBlank(message="Ce champs est obligatoire")
      * @Assert\Length(
      *      min = 8,
@@ -54,7 +54,7 @@ class NiveauDevaluation
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
+     * @Groups({"compde:write","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
      * *@Assert\NotBlank(message="Ce champs est obligatoire")
      * @Assert\Length(
      *      min = 8,
@@ -66,7 +66,7 @@ class NiveauDevaluation
     private $Criteres;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Competence::class, inversedBy="niveauDevaluations")
+     * @ORM\ManyToMany(targetEntity=Competence::class, inversedBy="niveauDevaluations",cascade="persist")
      */
     private $Competences;
 

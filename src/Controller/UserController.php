@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use function gmdate;
 
 class UserController extends AbstractController
 {
@@ -52,7 +53,7 @@ class UserController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    public function putUserId(UserService $service, Request $request, ProfilRepository $prof,EntityManagerInterface $manager)
+    public function putUserId(IriConverterInterface $iriconverter, UserService $service, Request $request, ProfilRepository $prof,EntityManagerInterface $manager)
     {
         //dd($request);
         $userUpdate = $service->PutUser($request,'avatar');
@@ -66,12 +67,15 @@ class UserController extends AbstractController
             //dd($setter);
             if(method_exists(User::class, $setter)){
                 if($setter=='setProfil'){
-                    $utilisateur->setProfil($userUpdate["profil"]);
+                    $profil = $iriconverter->getItemFromIri($userUpdate["profil"]);
+                    //dd($profil);
+                    $utilisateur->setProfil($profil);
+                    $utilisateur->setDtype($profil->getLibelle());
+                    //dd($utilisateur);
                 }
                 else{
                     $utilisateur->$setter($valeur);
                 }
-
             }
             if ($setter=='setPassword'){
                 $utilisateur->setPassword($this->encoder->encodePassword($utilisateur,$userUpdate['password']));

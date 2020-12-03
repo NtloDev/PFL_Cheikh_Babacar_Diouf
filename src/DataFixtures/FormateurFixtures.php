@@ -30,15 +30,15 @@ class FormateurFixtures extends Fixture implements DependentFixtureInterface
         $faker = Faker\Factory::create('fr_FR');
             $form = new Formateur();
             $harsh = $this->encoder->encodePassword($form, 'passer');
-            $form->setProfil($this->getReference(ProfileFixtures::FORMATEUR_REFERENCE));
-            $form->setUsername($faker->unique()->randomElement(['aminata']));
-            $form->setPassword($faker->randomElement([ $harsh, $harsh, $harsh, $harsh]));
-            $form->setPrenom($faker->randomElement(['babacar','aminata','Oumar','Laye']));
-            $form->setNom($faker->randomElement(['Diouf','Lo','Anne', 'Sall']));
-            $form->setEmail($faker->randomElement(['babacar@sa.sn','aminata@sa.sn','Oumar@sa.sn','laye@sa.sn']));
-            $form->setTelephone($faker->randomElement(['778458574','778548596','774859652','777777777']));
-            $form->setArchivage($faker->randomElement([0]));
-            $form->setGenre($faker->randomElement(['F','M','F','F']));
+            $form->setProfil($this->getReference(ProfileFixtures::FORMATEUR_REFERENCE))
+                 ->setUsername($faker->unique()->randomElement(['aminata']))
+                 ->setPassword($faker->randomElement([ $harsh, $harsh, $harsh, $harsh]))
+                 ->setPrenom($faker->randomElement(['babacar','aminata','Oumar','Laye']))
+                 ->setNom($faker->randomElement(['Diouf','Lo','Anne', 'Sall']))
+                 ->setEmail($faker->randomElement(['babacar@sa.sn','aminata@sa.sn','Oumar@sa.sn','laye@sa.sn']))
+                 ->setTelephone($faker->randomElement(['778458574','778548596','774859652','777777777']))
+                 ->setArchivage($faker->randomElement([0]))
+                 ->setGenre($faker->randomElement(['F','M','F','F']));
             $manager->persist($form);
 
         $manager->flush();

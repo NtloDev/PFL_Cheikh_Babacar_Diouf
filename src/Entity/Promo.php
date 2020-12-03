@@ -123,20 +123,26 @@ class Promo
     private $ProfilsDeSorties;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Referentiel::class, mappedBy="Promos")
+     * @ORM\ManyToMany(targetEntity=Referentiel::class, mappedBy="Promos",cascade={"persist"})
      */
     private $referentiels;
 
     /**
-     * @ORM\OneToMany(targetEntity=Groupe::class, mappedBy="Promo")
+     * @ORM\OneToMany(targetEntity=Groupe::class, mappedBy="Promo",cascade={"persist"})
      */
     private $groupes;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Apprenant::class, mappedBy="promo")
+     */
+    private $Apprenants;
 
     public function __construct()
     {
         $this->ProfilsDeSorties = new ArrayCollection();
         $this->referentiels = new ArrayCollection();
         $this->groupes = new ArrayCollection();
+        $this->Apprenants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -315,6 +321,36 @@ class Promo
             // set the owning side to null (unless already changed)
             if ($groupe->getPromo() === $this) {
                 $groupe->setPromo(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Apprenant[]
+     */
+    public function getApprenants(): Collection
+    {
+        return $this->Apprenants;
+    }
+
+    public function addApprenant(Apprenant $apprenant): self
+    {
+        if (!$this->Apprenants->contains($apprenant)) {
+            $this->Apprenants[] = $apprenant;
+            $apprenant->setPromo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApprenant(Apprenant $apprenant): self
+    {
+        if ($this->Apprenants->removeElement($apprenant)) {
+            // set the owning side to null (unless already changed)
+            if ($apprenant->getPromo() === $this) {
+                $apprenant->setPromo(null);
             }
         }
 

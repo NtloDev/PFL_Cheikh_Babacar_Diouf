@@ -27,9 +27,14 @@ class Apprenant extends User
     private $profilDeSortie;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Groupe::class, mappedBy="Apprenants")
+     * @ORM\ManyToMany(targetEntity=Groupe::class, mappedBy="Apprenants",cascade={"persist"})
      */
     private $groupes;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Promo::class, inversedBy="Apprenants")
+     */
+    private $promo;
 
     public function __construct()
     {
@@ -77,6 +82,18 @@ class Apprenant extends User
         if ($this->groupes->removeElement($groupe)) {
             $groupe->removeApprenant($this);
         }
+
+        return $this;
+    }
+
+    public function getPromo(): ?Promo
+    {
+        return $this->promo;
+    }
+
+    public function setPromo(?Promo $promo): self
+    {
+        $this->promo = $promo;
 
         return $this;
     }

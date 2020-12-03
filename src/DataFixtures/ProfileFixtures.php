@@ -18,9 +18,6 @@ class ProfileFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
-
-        // $product = new Product();
-        // $manager->persist($product);
             $profiles = ['ADMIN','APPRENANT','CM','FORMATEUR'];
             for ($i=0; $i<count($profiles) ; $i++) {
                 $profile= new profil();
@@ -38,7 +35,6 @@ class ProfileFixtures extends Fixture
                 elseif($profiles[$i]== 'FORMATEUR'){
                     $this->addReference(self::FORMATEUR_REFERENCE,$profile);
                 }
-                //$this->setReference($i,$profile);
                 $manager->persist($profile);
             }
             $manager->flush();
