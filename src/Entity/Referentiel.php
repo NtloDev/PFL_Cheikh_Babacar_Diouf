@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use App\Repository\ReferentielRepository;
+use Symfony\Component\HttpFoundation\File\File;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -11,9 +13,11 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @ApiFilter(BooleanFilter::class, properties={"Archive"})
  * @ApiResource(
  * collectionOperations={
  *          "getReferentiel"={
@@ -31,11 +35,13 @@ use Doctrine\ORM\Mapping as ORM;
  *              "normalization_context"={"groups"={"competence:read"}},
  *
  *          },
- *         "postGroupCompetence"={
+ *         "create_referentiel"={
  *              "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR')",
  *              "security_message"="ACCES REFUSE",
  *              "method"= "POST",
- *              "path"= "/admin/referentiels",
+ *              "route_name" = "create_referentiel",
+ *              "path"="/admin/referentiels",
+ *              "deserialize" = false,
  *              "normalization_context"={"groups"={"postref:write"}},
  *      },
  *
@@ -75,12 +81,13 @@ class Referentiel
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"ref_grpe:read","OnePromoReferentiel:read","afficherGr:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     *@Groups({"grpcom:write","ref_grpe:read","competence:read","postref:write","afficherGr:read","grpco:read"})
+     *@Groups({"OnePromoReferentiel:read","OnePromo:read","grpcom:write","ref_grpe:read","competence:read","postref:write","afficherGr:read","grpco:read"})
      * @Assert\NotBlank(message="Ce champs est obligatoire")
      * @Assert\Length(
      *      min = 3,
@@ -88,31 +95,26 @@ class Referentiel
      *      minMessage = "Ce champs doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Ce champs ne doit pas dépasser {{ limit }} charactères"
      * )
+     * @Groups({"OnePromoFormateursgroupeApprenants:read","OnePromoApprenantAAttente:read","Promos:read"})
      */
     private $Presentation;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"grpcom:write","ref_grpe:read","competence:read","postref:write","afficherGr:read","grpco:read"})
-     */
-    private $Programme;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"grpcom:write","ref_grpe:read","competence:read","postref:write","afficherGr:read","grpco:read"})
+     * @Groups({"OnePromoReferentiel:read","OnePromoApprenantAAttente:read","OnePromoReferentiel:read","Promos:read","grpcom:write","ref_grpe:read","competence:read","postref:write","afficherGr:read","grpco:read"})
      */
     private $CriteresDevaluation;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"grpcom:write","ref_grpe:read","competence:read","postref:write","afficherGr:read","grpco:read"})
+     * @Groups({"OnePromoReferentiel:read","Promos:read","grpcom:write","ref_grpe:read","competence:read","postref:write","afficherGr:read","grpco:read"})
      */
     private $CriteresDadmission;
 
     /**
      * @ORM\ManyToMany(targetEntity=GroupeDeCompetences::class, inversedBy="referentiels")
      * @ApiSubresource
-     * @Groups({"grpcom:write","ref_grpe:read","competence:read","postref:write","afficherGr:read","grpco:read"})
+     * @Groups({"OnePromoReferentiel:read","grpcom:write","ref_grpe:read","competence:read","postref:write","afficherGr:read","grpco:read"})
      */
     private $GroupeDeCompetences;
 
@@ -125,6 +127,18 @@ class Referentiel
      * @ORM\Column(type="boolean")
      */
     private $Archive;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"OnePromoReferentiel:read","OnePromo:read","grpcom:write","ref_grpe:read","competence:read","postref:write","afficherGr:read","grpco:read"})
+     */
+    private $Libelle;
+
+    /**
+     * @ORM\Column(type="blob", nullable=true)
+     * @Groups({"OnePromo:read","competence:read","postref:write","grpco:read"})
+     */
+    private $Programme;
 
     public function __construct()
     {
@@ -145,18 +159,6 @@ class Referentiel
     public function setPresentation(string $Presentation): self
     {
         $this->Presentation = $Presentation;
-
-        return $this;
-    }
-
-    public function getProgramme(): ?string
-    {
-        return $this->Programme;
-    }
-
-    public function setProgramme(string $Programme): self
-    {
-        $this->Programme = $Programme;
 
         return $this;
     }
@@ -241,6 +243,30 @@ class Referentiel
     public function setArchive(bool $Archive): self
     {
         $this->Archive = $Archive;
+
+        return $this;
+    }
+
+    public function getLibelle(): ?string
+    {
+        return $this->Libelle;
+    }
+
+    public function setLibelle(?string $Libelle): self
+    {
+        $this->Libelle = $Libelle;
+
+        return $this;
+    }
+
+    public function getProgramme()
+    {
+        return $this->Programme;
+    }
+
+    public function setProgramme($Programme): self
+    {
+        $this->Programme = $Programme;
 
         return $this;
     }

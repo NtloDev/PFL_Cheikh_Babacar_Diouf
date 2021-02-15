@@ -31,20 +31,26 @@ class ApprenantFixtures extends Fixture implements DependentFixtureInterface
     {
          
         $faker = Faker\Factory::create('fr_FR');
-            $appr = new Apprenant();
+
         $j=1;
-            $harsh = $this->encoder->encodePassword($appr, 'passer');
-            $appr->setProfil($this->getReference(ProfileFixtures::APPRENANT_REFERENCE))
-                 ->setUsername($faker->unique()->randomElement(['Laye']))
-                 ->setPassword($faker->randomElement([ $harsh, $harsh, $harsh, $harsh]))
-                 ->setPrenom($faker->randomElement(['babacar','aminata','Oumar','Laye']))
-                 ->setNom($faker->randomElement(['Diouf','Lo','Anne', 'Sall']))
-                 ->setEmail($faker->randomElement(['babacar@sa.sn','aminata@sa.sn','Oumar@sa.sn','laye@sa.sn']))
-                 ->setTelephone($faker->randomElement(['778458574','778548596','774859652','777777777']))
-                 ->setArchivage($faker->randomElement([0]))
-                 ->setGenre($faker->randomElement(['F','M','F','F']));
-                $this->addReference(self::getReferenceKey($j),$appr);
-            $manager->persist($appr);
+
+            for($i=0 ;$i<=9 ;$i++){
+                $appr = new Apprenant();
+                $harsh = $this->encoder->encodePassword($appr, 'passer');
+                $appr->setProfil($this->getReference(ProfileFixtures::APPRENANT_REFERENCE))
+                    ->setUsername($faker->unique()->randomElement(['Laye','Fatou','Moussa','Ameth','Jean','Falou','Weuz','Abdou','Ansou','Tapha']))
+                    ->setPassword($faker->randomElement([ $harsh, $harsh, $harsh, $harsh]))
+                    ->setPrenom($faker->randomElement(['babacar','aminata','Oumar','Laye','Fatou','Moussa','Ameth','Jean','Falou','Weuz','Abdou','Ansou','Tapha']))
+                    ->setNom($faker->randomElement(['Diouf','Lo','Anne', 'Sall','Niang','Mbaye','Mendy','Ndiaye','Fall','Toure']))
+                    ->setEmail($faker->randomElement(['babacar@sa.sn','aminata@sa.sn','Oumar@sa.sn','laye@sa.sn']))
+                    ->setTelephone($faker->randomElement(['778458574','778548596','774859652','777777777']))
+                    ->setArchivage($faker->randomElement([0]))
+                    ->setGenre($faker->randomElement(['F','M','F','F']))
+                    ->setStatut('Attente');
+                $this->setReference(self::getReferenceKey($i),$appr);
+                $manager->persist($appr);
+            }
+
 
         $manager->flush();
     }

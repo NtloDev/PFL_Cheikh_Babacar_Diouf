@@ -70,9 +70,15 @@ class NiveauDevaluation
      */
     private $Competences;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="Niveaux")
+     */
+    private $briefs;
+
     public function __construct()
     {
         $this->Competences = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -136,6 +142,33 @@ class NiveauDevaluation
     public function removeCompetence(Competence $competence): self
     {
         $this->Competences->removeElement($competence);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->addNiveau($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->removeElement($brief)) {
+            $brief->removeNiveau($this);
+        }
 
         return $this;
     }

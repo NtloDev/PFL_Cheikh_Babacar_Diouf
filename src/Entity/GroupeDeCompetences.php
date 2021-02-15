@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\GroupeDeCompetencesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,6 +15,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @ApiFilter(BooleanFilter::class, properties={"Archive"})
  * @ApiResource(
  * collectionOperations={
  *          "getgrpcompetences"={
@@ -78,13 +81,13 @@ class GroupeDeCompetences
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"postref:write","grpcom:write","grpcompde:write","compde:write"})
+     * @Groups({"compgetid:read","afficherGr:read","OnePromoReferentiel:read","postref:write","grpcom:write","grpcompde:write","compde:write","groupecompid:read","groupecomp:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"compde:write","grpcompde:write","grpcom:write","grpco:read","afficherGr:read","postref:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","putcompetence:write","ref_grpe:read","competence:read"})
+     * @Groups({"compgetid:read","OnePromoReferentiel:read","compde:write","grpcompde:write","grpcom:write","grpco:read","afficherGr:read","postref:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","putcompetence:write","ref_grpe:read","competence:read"})
      * @Assert\NotBlank(message="Le libelle ne doit pas être vide")
      * @Assert\Length(
      *      min = 3,
@@ -97,7 +100,7 @@ class GroupeDeCompetences
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"compde:write","grpcompde:write","grpcom:write","grpco:read","afficherGr:read","postref:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","putcompetence:write","ref_grpe:read","competence:read"})
+     * @Groups({"OnePromoReferentiel:read","compde:write","grpcompde:write","grpcom:write","grpco:read","afficherGr:read","postref:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","putcompetence:write","ref_grpe:read","competence:read"})
      * @Assert\NotBlank(message="La description ne doit pas être vide")
      * @Assert\Length(
      *      min = 8,
@@ -110,7 +113,7 @@ class GroupeDeCompetences
 
     /**
      * @ORM\ManyToMany(targetEntity=Competence::class, mappedBy="GroupeDeCompetences",cascade="persist")
-     * @Groups({"grpcompde:write","grpco:read","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read"})
+     * @Groups({"OnePromoReferentiel:read","grpcompde:write","grpco:read","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read"})
      */
     private $competences;
 

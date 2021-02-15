@@ -19,7 +19,13 @@ class PromoFixtures extends Fixture implements  DependentFixtureInterface
         $faker = Faker\Factory::create('fr_FR');
         $j=1;
         $referentiel = $this->getReference(ReferentielFixtures::getReferencekey($j));
-        $appr = $this->getReference(ApprenantFixtures::getReferencekey($j));
+        for($i=0 ;$i<=9 ;$i++){
+            $appr[$i] = $this->getReference(ApprenantFixtures::getReferencekey($i));
+        }
+        for($l=0 ;$l<=4 ;$l++){
+            $form[$l] = $this->getReference(FormateurFixtures::getReferencekey($l));
+        }
+
         $Groupe = $this->getReference(GroupeFixtures::getReferencekey($j));
         $date= new DateTime();
             $promo = new Promo();
@@ -32,7 +38,14 @@ class PromoFixtures extends Fixture implements  DependentFixtureInterface
                 ->setDateFin($date)
                 ->setArchive(0);
         $promo->addReferentiel($referentiel);
-        $promo->addApprenant($appr);
+        for($k=0 ;$k<=9 ;$k++) {
+            $promo->addApprenant($appr[$k]);
+            $Groupe->addApprenant($appr[$k]);
+        }
+        for($m=0 ;$m<=4 ;$m++) {
+            $promo->addFormateur($form[$m]);
+        }
+
         $promo->addGroupe($Groupe);
 
         $manager->persist($promo);

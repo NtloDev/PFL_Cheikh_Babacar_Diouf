@@ -18,25 +18,31 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 
 
 /**
- * @ApiFilter(BooleanFilter::class, properties={"archive"})
+ * @ApiFilter(BooleanFilter::class, properties={"Archivage"})
  * @ApiResource(
  * attributes = {
- *              
+ *
  *              "security" = "is_granted('ROLE_ADMIN')",
  *              "security_message" = "Accès refusé!"
  *       },
  * collectionOperations = {
+ *     "getUsers" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/users",
+ *              "normalization_context"={"groups"={"users:read"}}
+ *       },
  *      "create_user"={
  *              "method"="POST",
  *              "path"="/admin/users",
  *              "route_name" = "create_user",
- *              "deserialize"=false   
+ *              "deserialize" = false
  *       },
  * },
  * itemOperations={
  *      "getUserById"={
  *          "method"= "GET",
- *          "path"= "/admin/users/{id}"  
+ *          "path"= "/admin/users/{id}",
+ *          "normalization_context"={"groups"={"OneUser:read"}}
  *      },
  *      "editUser"={
  *          "method"= "PUT",
@@ -52,11 +58,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
  *              "route_name" = "putUserId",
  *              "deserialize"=false
  *       },
- *       "getUsers" = {
- *              "method"= "GET",
- *              "path" = "/admin/users",
- *              "normalization_context"={"groups"={"users:read"}}
- *       },
  * }
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -70,12 +71,13 @@ class User implements UserInterface
      * @ORM\Id.
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"users:read","OneUser:read","OnePromoPrincipal:read"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"ProfilUsers:read","profilUser:read","users:read"})
+     * @Groups({"OneUser:read","ProfilUsers:read","profilUser:read","users:read","Promos:read","OnePromo:read"})
      */
     private $username;
 
@@ -90,31 +92,31 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"ProfilUsers:read","profilUser:read","users:read","profilsdesortieapprenants:read"})
+     * @Groups({"OneUser:read","OnePromoFormateursgroupeApprenants:read","OnePromogroupeApprenants:read","OnePromoApprenantAAttente:read","OnePromoPrincipal:read","ProfilUsers:read","profilUser:read","users:read","profilsdesortieapprenants:read","Promos:read","OnePromo:read"})
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"ProfilUsers:read","profilUser:read","users:read","profilsdesortieapprenants:read"})
+     * @Groups({"OneUser:read","OnePromoFormateursgroupeApprenants:read","OnePromogroupeApprenants:read","OnePromoApprenantAAttente:read","OnePromoPrincipal:read","ProfilUsers:read","profilUser:read","users:read","profilsdesortieapprenants:read","OnePromo:read"})
      */
-    private $Nom;
+    private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"users:read"})
+     * @Groups({"OnePromoPrincipal:read","OneUser:read","users:read","profilUser:read"})
      */
-    private $Email;
+    private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"users:read"})
+     * @Groups({"OnePromoPrincipal:read","OneUser:read","users:read"})
      */
-    private $Telephone;
+    private $telephone;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"users:read"})
+     * @Groups({"OneUser:read","users:read"})
      */
     private $genre;
 
@@ -245,36 +247,36 @@ class User implements UserInterface
 
     public function getNom(): ?string
     {
-        return $this->Nom;
+        return $this->nom;
     }
 
-    public function setNom(?string $Nom): self
+    public function setNom(?string $nom): self
     {
-        $this->Nom = $Nom;
+        $this->nom = $nom;
 
         return $this;
     }
 
     public function getEmail(): ?string
     {
-        return $this->Email;
+        return $this->email;
     }
 
-    public function setEmail(string $Email): self
+    public function setEmail(string $email): self
     {
-        $this->Email = $Email;
+        $this->email = $email;
 
         return $this;
     }
 
     public function getTelephone(): ?string
     {
-        return $this->Telephone;
+        return $this->telephone;
     }
 
-    public function setTelephone(string $Telephone): self
+    public function setTelephone(string $telephone): self
     {
-        $this->Telephone = $Telephone;
+        $this->telephone = $telephone;
 
         return $this;
     }

@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use function dd;
+use function json_decode;
 
 class Userservice
 {
@@ -83,11 +84,13 @@ class Userservice
     }
     public function add ($request, $profil=null)
     {
+        //dd($request);
+        //$user_data=json_decode($request->getContent(), true) ;
         $user_data=$request->request->all();
-        //dd($user_data['profil']);
+        dd($user_data['profil']);
         $profil = $this->_iriconverter->getItemFromIri($user_data['profil']);
         //dd($profil);
-        $user= $this->_serializer->denormalize($user_data,"App\Entity\\".$profil->getLibelle(),true);
+        $user= $this->_serializer->denormalize($user_data,"App\Entity\\Apprenant",true);
         $avatar=$request->files->get("avatar");
         if($avatar)
         {

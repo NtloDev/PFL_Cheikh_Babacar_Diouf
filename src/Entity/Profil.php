@@ -16,10 +16,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 
 /**
+ * @ApiFilter(BooleanFilter::class, properties={"archivage"})
  * @ApiResource(
  * attributes = {
  *              "pagination_client_enabled"=true,
- *              "pagination_items_per_page"=1,
+ *              "pagination_items_per_page"=4,
  *              "security" = "is_granted('ROLE_ADMIN')",
  *              "security_message" = "Accès refusé!"
  *       },
@@ -69,7 +70,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
  * 
  * },
  * )
- * @ApiFilter(BooleanFilter::class, properties={"archive"})
  * @ORM\Entity(repositoryClass=ProfilRepository::class)
  */
 class Profil
@@ -78,6 +78,7 @@ class Profil
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     *@Groups({"profil:read"})
      */
     private $id;
 

@@ -18,15 +18,15 @@ class GroupeFixtures extends Fixture
     {
         $faker = Faker\Factory::create('fr_FR');
         $j=1;
-        for ($i=0; $i<5 ;$i++)
-        {
+
             $Groupe = new Groupe();
-            $Groupe->setLibelle('Groupe'.$i)
-                ->setArchive(0);
+            $Groupe->setLibelle('Groupe Principal')
+                ->setArchive(0)
+                ->setType('Principal');
             $this->setReference(self::getReferenceKey($j),$Groupe);
 
             $manager->persist($Groupe);
-        }
+
 
         $manager->flush();
     }

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use App\Repository\ProfilDeSortieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,7 +13,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 /**
+ * @ApiFilter(BooleanFilter::class, properties={"archive"})
  * @ApiResource(
  * attributes = {
  *              "security" = "is_granted('ROLE_ADMIN')",
@@ -22,7 +25,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * collectionOperations = {
  *      "getProfilsDeSortie" = {
  *              "method"= "GET",
- *              "path" = "/admin/profilsorties"
+ *              "path" = "/admin/profilsorties",
+ *              "normalization_context"={"groups"={"profilsdesortie:read"}}
  *
  *       },
  *
@@ -63,6 +67,7 @@ class ProfilDeSortie
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"profilsdesortie:read"})
      */
     private $id;
 
@@ -75,7 +80,7 @@ class ProfilDeSortie
      *      minMessage = "Le libelle doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le libelle ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"profilsdesortieapprenants:read"})
+     * @Groups({"profilsdesortieapprenants:read","profilsdesortie:read"})
      */
     private $libelle;
 

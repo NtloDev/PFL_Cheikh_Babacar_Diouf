@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CompetenceRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,6 +16,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @ApiFilter(BooleanFilter::class, properties={"Archive"})
  * @ApiResource(
  *collectionOperations={
  *                      "getcomp"={
@@ -64,13 +67,13 @@ class Competence
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"postgroupecomp:write","grpcompde:write","compde:write"})
+     * @Groups({"groupecomp:read","OnePromoReferentiel:read","postgroupecomp:write","grpcompde:write","compde:write","compgetid:read","groupecompid:read","competencesEtNiveaux:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"compde:write","grpcompde:write","grpco:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read"})
+     * @Groups({"OnePromoReferentiel:read","compde:write","grpcompde:write","grpco:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read"})
      * @Assert\NotBlank(message="Le libelle ne doit pas être vide")
      * @Assert\Length(
      *      min = 3,
@@ -83,20 +86,13 @@ class Competence
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"compde:write","grpcompde:write","grpco:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read"})
-     * @Assert\NotBlank(message="La description ne doit pas être vide")
-     * @Assert\Length(
-     *      min = 8,
-     *      max = 100,
-     *      minMessage = "Le libelle doit avoir au moins {{ limit }} charactères",
-     *      maxMessage = "Le libelle ne doit pas dépasser {{ limit }} charactères"
-     * )
+     * @Groups({"OnePromoReferentiel:read","compde:write","grpcompde:write","grpco:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","postgroupecomp:write","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read"})
      */
     private $Description;
 
     /**
      * @ORM\ManyToMany(targetEntity=GroupeDeCompetences::class, inversedBy="competences",cascade="persist")
-     * @Groups({"compde:write"})
+     * @Groups({"compde:write","compgetid:read"})
      *
      */
     private $GroupeDeCompetences;
@@ -113,10 +109,16 @@ class Competence
      */
     private $Archive=false;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="Competences")
+     */
+    private $briefs;
+
     public function __construct()
     {
         $this->GroupeDeCompetences = new ArrayCollection();
         $this->niveauDevaluations = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -207,6 +209,33 @@ class Competence
     public function setArchive(bool $Archive): self
     {
         $this->Archive = $Archive;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->addCompetence($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->removeElement($brief)) {
+            $brief->removeCompetence($this);
+        }
 
         return $this;
     }

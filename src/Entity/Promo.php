@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\PromoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,11 +15,21 @@ use Doctrine\ORM\Mapping as ORM;
  *              "security" = "is_granted('ROLE_ADMIN')",
  *              "security_message" = "Accès refusé!"
  *       },
- * normalizationContext ={"groups"={"promo:read"}},
  * collectionOperations = {
  *      "getPromos" = {
  *              "method"= "GET",
- *              "path" = "/admin/promos"
+ *              "path" = "/admin/promos",
+ *              "normalization_context"={"groups"={"Promos:read"}},
+ *       },
+ *     "getPromoGroupePrincipal" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/promos/principal",
+ *              "normalization_context"={"groups"={"Promos:read"}},
+ *       },
+ *     "getPromoApprenantAttente" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/promos/apprenants/attente",
+ *              "normalization_context"={"groups"={"Promos:read"}},
  *       },
  *      "addPromo" = {
  *              "method"= "POST",
@@ -28,14 +39,40 @@ use Doctrine\ORM\Mapping as ORM;
  * },
  *
  * itemOperations = {
- *      "getApprenantsOfPromo" = {
+ *     "getPromo" = {
  *              "method"= "GET",
- *              "path" = "/admin/promos/{id}/apprenants/"
+ *              "path" = "/admin/promos/{id}/",
+ *              "normalization_context"={"groups"={"OnePromo:read"}},
  *
  *       },
- *      "getPromoById" = {
+ *      "getApprenantsOfPromo" = {
  *              "method"= "GET",
- *              "path" = "/admin/promos/{id}"
+ *              "path" = "/admin/promos/{id}/principal/",
+ *              "normalization_context"={"groups"={"OnePromoPrincipal:read"}},
+ *
+ *       },
+ *      "getPromoReferentielCompetences" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/promos/{id}/referentiels",
+ *              "normalization_context"={"groups"={"OnePromoReferentiel:read"}},
+ *
+ *       },
+ *     "getPromoApprenantsEnAttente" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/promos/{id}/apprenants/attente",
+ *              "normalization_context"={"groups"={"OnePromoApprenantAAttente:read"}},
+ *
+ *       },
+ *     "getPromoGroupeApprenants" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/promos/{id}/groupes/{id_g}/apprenants",
+ *              "normalization_context"={"groups"={"OnePromogroupeApprenants:read"}},
+ *
+ *       },
+ *     "getFormateursGroupeReferentiel" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/promos/{id}/formateurs",
+ *              "normalization_context"={"groups"={"OnePromoFormateursgroupeApprenants:read"}},
  *
  *       },
  *      "editPromo"={
@@ -74,41 +111,49 @@ class Promo
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"Promos:read","OnePromoPrincipal:read","OnePromoReferentiel:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"OnePromoFormateursgroupeApprenants:read","OnePromogroupeApprenants:read","OnePromoApprenantAAttente:read","Promos:read","OnePromo:read","OnePromoPrincipal:read","OnePromoReferentiel:read"})
      */
     private $Langue;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"OnePromoFormateursgroupeApprenants:read","OnePromogroupeApprenants:read","OnePromoApprenantAAttente:read","Promos:read","OnePromo:read","OnePromoPrincipal:read","OnePromoReferentiel:read"})
      */
     private $Titre;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"OnePromogroupeApprenants:read","OnePromoApprenantAAttente:read","Promos:read","OnePromo:read","OnePromoPrincipal:read","OnePromoReferentiel:read"})
      */
     private $Description;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"OnePromoApprenantAAttente:read","Promos:read","OnePromo:read","OnePromoPrincipal:read","OnePromoReferentiel:read"})
      */
     private $Lieu;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"OnePromoApprenantAAttente:read","Promos:read","OnePromo:read","OnePromoPrincipal:read","OnePromoReferentiel:read"})
      */
     private $Fabrique;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"OnePromoApprenantAAttente:read","Promos:read","OnePromo:read","OnePromoPrincipal:read","OnePromoReferentiel:read"})
      */
     private $DateDebut;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"OnePromoApprenantAAttente:read","Promos:read","OnePromo:read","OnePromoPrincipal:read","OnePromoReferentiel:read"})
      */
     private $DateFin;
 
@@ -124,18 +169,32 @@ class Promo
 
     /**
      * @ORM\ManyToMany(targetEntity=Referentiel::class, mappedBy="Promos",cascade={"persist"})
+     * @Groups({"OnePromoFormateursgroupeApprenants:read","OnePromoApprenantAAttente:read","Promos:read","OnePromo:read","OnePromoPrincipal:read","OnePromoReferentiel:read"})
      */
     private $referentiels;
 
     /**
      * @ORM\OneToMany(targetEntity=Groupe::class, mappedBy="Promo",cascade={"persist"})
+     * @Groups({"OnePromoFormateursgroupeApprenants:read","OnePromogroupeApprenants:read","Promos:read","OnePromo:read"})
      */
     private $groupes;
 
     /**
      * @ORM\OneToMany(targetEntity=Apprenant::class, mappedBy="promo")
+     * @Groups({"OnePromoApprenantAAttente:read","Promos:read","OnePromoPrincipal:read"})
      */
     private $Apprenants;
+
+    /**
+     * @ORM\OneToMany(targetEntity=BriefMaPromo::class, mappedBy="Promo")
+     */
+    private $briefMaPromos;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="promos")
+     *@Groups({"Promos:read","OnePromo:read","OnePromoPrincipal:read"})
+     */
+    private $Formateurs;
 
     public function __construct()
     {
@@ -143,6 +202,8 @@ class Promo
         $this->referentiels = new ArrayCollection();
         $this->groupes = new ArrayCollection();
         $this->Apprenants = new ArrayCollection();
+        $this->briefMaPromos = new ArrayCollection();
+        $this->Formateurs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -353,6 +414,60 @@ class Promo
                 $apprenant->setPromo(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|BriefMaPromo[]
+     */
+    public function getBriefMaPromos(): Collection
+    {
+        return $this->briefMaPromos;
+    }
+
+    public function addBriefMaPromo(BriefMaPromo $briefMaPromo): self
+    {
+        if (!$this->briefMaPromos->contains($briefMaPromo)) {
+            $this->briefMaPromos[] = $briefMaPromo;
+            $briefMaPromo->setPromo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBriefMaPromo(BriefMaPromo $briefMaPromo): self
+    {
+        if ($this->briefMaPromos->removeElement($briefMaPromo)) {
+            // set the owning side to null (unless already changed)
+            if ($briefMaPromo->getPromo() === $this) {
+                $briefMaPromo->setPromo(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Formateur[]
+     */
+    public function getFormateurs(): Collection
+    {
+        return $this->Formateurs;
+    }
+
+    public function addFormateur(Formateur $formateur): self
+    {
+        if (!$this->Formateurs->contains($formateur)) {
+            $this->Formateurs[] = $formateur;
+        }
+
+        return $this;
+    }
+
+    public function removeFormateur(Formateur $formateur): self
+    {
+        $this->Formateurs->removeElement($formateur);
 
         return $this;
     }

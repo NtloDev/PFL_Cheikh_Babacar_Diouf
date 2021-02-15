@@ -34,6 +34,7 @@ class UserController extends AbstractController
     public function create_user(Userservice $userservice,Request $request, SerializerInterface $serialize,UserPasswordEncoderInterface $encoder,EntityManagerInterface $entity)
     {
         $user= $userservice->add($request,$profil=null);
+        //dd($user);
         $entity -> persist($user);
         $entity -> flush();
         return $this->json("succes",201);

@@ -36,10 +36,31 @@ class Apprenant extends User
      */
     private $promo;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=LivrableAttendu::class, mappedBy="Apprenants")
+     */
+    private $livrableAttendus;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=BriefApprenant::class, inversedBy="Apprenant")
+     */
+    private $briefApprenant;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=ApprenantLivrablePartiel::class, inversedBy="Apprenants")
+     */
+    private $apprenantLivrablePartiel;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $Statut;
+
     public function __construct()
     {
         parent::__construct();
         $this->groupes = new ArrayCollection();
+        $this->livrableAttendus = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -94,6 +115,69 @@ class Apprenant extends User
     public function setPromo(?Promo $promo): self
     {
         $this->promo = $promo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LivrableAttendu[]
+     */
+    public function getLivrableAttendus(): Collection
+    {
+        return $this->livrableAttendus;
+    }
+
+    public function addLivrableAttendu(LivrableAttendu $livrableAttendu): self
+    {
+        if (!$this->livrableAttendus->contains($livrableAttendu)) {
+            $this->livrableAttendus[] = $livrableAttendu;
+            $livrableAttendu->addApprenant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLivrableAttendu(LivrableAttendu $livrableAttendu): self
+    {
+        if ($this->livrableAttendus->removeElement($livrableAttendu)) {
+            $livrableAttendu->removeApprenant($this);
+        }
+
+        return $this;
+    }
+
+    public function getBriefApprenant(): ?BriefApprenant
+    {
+        return $this->briefApprenant;
+    }
+
+    public function setBriefApprenant(?BriefApprenant $briefApprenant): self
+    {
+        $this->briefApprenant = $briefApprenant;
+
+        return $this;
+    }
+
+    public function getApprenantLivrablePartiel(): ?ApprenantLivrablePartiel
+    {
+        return $this->apprenantLivrablePartiel;
+    }
+
+    public function setApprenantLivrablePartiel(?ApprenantLivrablePartiel $apprenantLivrablePartiel): self
+    {
+        $this->apprenantLivrablePartiel = $apprenantLivrablePartiel;
+
+        return $this;
+    }
+
+    public function getStatut(): ?string
+    {
+        return $this->Statut;
+    }
+
+    public function setStatut(string $Statut): self
+    {
+        $this->Statut = $Statut;
 
         return $this;
     }

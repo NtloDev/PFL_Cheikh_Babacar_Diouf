@@ -45,9 +45,8 @@ class PromoController extends AbstractController
         $promo= $serializer->denormalize($promo_data,"App\Entity\Promo",true);
         //dd($promo);
         $promo->setArchive(0);
-        $referentiel= $iriconverter->getItemFromIri($promo_data["Referentiel"]);
+        // $referentiel= $iriconverter->getItemFromIri($promo_data["referentiels"]);
         //dd($referentiel);
-        $promo->addReferentiel($referentiel);
         $doc = $request->files->get("document");
         $file = IOFactory::identify($doc);
         $reader = IOFactory::createReader($file);
@@ -74,6 +73,7 @@ class PromoController extends AbstractController
             $groupe= new groupe();
             $groupe->setLibelle("Groupe Principal")
                    ->setArchive(0)
+                   ->setType("Principal")
                    ->addApprenant($user);
             $promo->addGroupe($groupe);
 

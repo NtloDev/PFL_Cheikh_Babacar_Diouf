@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\GroupeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -23,6 +24,7 @@ class Groupe
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"OnePromogroupeApprenants:read","Promos:read","OnePromo:read"})
      */
     private $Libelle;
 
@@ -38,18 +40,31 @@ class Groupe
 
     /**
      * @ORM\ManyToMany(targetEntity=Apprenant::class, inversedBy="groupes")
+     * @Groups({"OnePromogroupeApprenants:read","Promos:read"})
      */
     private $Apprenants;
 
     /**
      * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="groupes")
+     * @Groups({"OnePromoFormateursgroupeApprenants:read","Promos:read"})
      */
     private $Formateurs;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="Groupes")
+     */
+    private $briefs;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $Type;
 
     public function __construct()
     {
         $this->Apprenants = new ArrayCollection();
         $this->Formateurs = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -137,6 +152,45 @@ class Groupe
     public function removeFormateur(Formateur $formateur): self
     {
         $this->Formateurs->removeElement($formateur);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->addGroupe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->removeElement($brief)) {
+            $brief->removeGroupe($this);
+        }
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->Type;
+    }
+
+    public function setType(string $Type): self
+    {
+        $this->Type = $Type;
 
         return $this;
     }
